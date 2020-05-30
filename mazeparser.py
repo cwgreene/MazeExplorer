@@ -12,7 +12,7 @@ maze1 = """
 SEPARATORLINE = "SEPARATORLINE"
 NODELINE = "NODELINE"
 
-def parse_maze_graph(maze):
+def parse_maze_graph(maze, Node = lambda x, char: (x, char)):
     graph = {}
     state = "SEPARATORLINE"
     maze = [line for line in maze if line != ""]
@@ -35,8 +35,8 @@ def parse_maze_graph(maze):
                     graph[below_node_pos].append(above_node_pos)
                 # don't care about walls
             if state == NODELINE:
-                left_node = (lineno//2, charpos // 2)
-                right_node = (lineno//2, charpos // 2 + 1)
+                left_node = (lineno//2 - 1, charpos // 2 - 1)
+                right_node = (lineno//2 - 1, charpos // 2)
                 if char not in "|.X* ":
                     raise Exception("Invalid char '{}' at line {} pos {} on NODELINE".format(char, lineno, charpos))
                 if char == " ":
@@ -54,8 +54,10 @@ def parse_maze_graph(maze):
     result_graph = {}
     for node in graph:
         if graph[node]:
-            result_graph[node] = graph[node]
-
+            print(graph[node])
+            print(node)
+            char = maze[2*node[0]+1][2*node[1]+1]
+            result_graph[node] = Node(graph[node], char)
     return result_graph
 
 if __name__ == "__main__":
